@@ -1,7 +1,21 @@
+<style>
+  /* Load Amsterdam One from repo root */
+  @font-face {
+    font-family: "Amsterdam One";
+    src: url("./AmsterdamOne.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  /* Poppins (works on web preview; some email clients may ignore external fonts) */
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+</style>
+
 <table cellpadding="0" cellspacing="0" width="600"
-  style="font-family: Arial, sans-serif; color:#ffffff; border-collapse:collapse;">
+  style="font-family: 'Poppins', Arial, sans-serif; color:#ffffff; border-collapse:collapse;">
   <tr>
-    <td bgcolor="#1653A5" background="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png"
+    <td bgcolor="#1653A5"
+      background="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png"
       style="
         background-color:#1653A5;
         background-image:url('https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png');
@@ -10,24 +24,71 @@
         background-size:cover;
         padding: 30px;
       ">
-      <div style="font-size:28px; font-family:'Brush Script MT', cursive; line-height:1; padding:0 55px;">
+
+      <!-- Name -->
+      <div style="font-size:34px; font-family:'Amsterdam One','Brush Script MT',cursive; line-height:1; padding:0 55px;">
         Chris Allison
       </div>
-      <div style="font-size:10px; letter-spacing:2px; margin-top:4px; padding:0 0 0 55px;">
+
+      <!-- Title -->
+      <div style="font-size:10px; letter-spacing:2px; margin-top:6px; padding:0 0 0 55px; font-family:'Poppins', Arial, sans-serif; font-weight:500;">
         EXECUTIVE ADMINISTRATOR
       </div>
-<br />
-      <div style="margin-top:15px; font-size:13px; line-height:1.6;  padding:0 55px; letter-spacing: 1.5px;">
+
+      <br />
+
+      <!-- Contact lines -->
+      <div style="margin-top:15px; font-size:13px; line-height:1.9; padding:0 55px; letter-spacing: 1.5px; font-family:'Poppins', Arial, sans-serif; font-weight:400;">
+
+        <!-- Phone -->
+        <span style="display:inline-block; vertical-align:middle; margin-right:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;">
+            <circle cx="12" cy="12" r="11" fill="#ffffff" stroke="#1653A5" stroke-width="2"></circle>
+            <path fill="#1653A5" d="M15.6 14.9l-1.4 1.4c-.2.2-.6.3-.9.2-1.5-.5-3-1.6-4.2-2.8s-2.2-2.7-2.8-4.2c-.1-.3 0-.7.2-.9l1.4-1.4c.2-.2.2-.5 0-.7L6.9 5.5c-.2-.2-.5-.2-.7 0L5 6.7c-.8.8-1.1 2-.7 3.1.8 2.3 2.3 4.6 4.3 6.6s4.3 3.5 6.6 4.3c1.1.4 2.3.1 3.1-.7l1.2-1.2c.2-.2.2-.5 0-.7l-3-3c-.2-.2-.5-.2-.7 0z"/>
+          </svg>
+        </span>
         <a href="tel:7607277800" style="color:#ffffff; text-decoration:none;">760-727-7800</a><br>
+
+        <!-- Website -->
+        <span style="display:inline-block; vertical-align:middle; margin-right:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;">
+            <circle cx="12" cy="12" r="11" fill="#ffffff" stroke="#1653A5" stroke-width="2"></circle>
+            <path fill="#1653A5" d="M12 6a6 6 0 100 12 6 6 0 000-12zm4.9 5H15c-.1-1.2-.4-2.3-.9-3.2 1.4.7 2.4 2 2.8 3.2zM12 7.1c.7.9 1.2 2.3 1.4 3.9h-2.8c.2-1.6.7-3 1.4-3.9zM7.1 11c.4-1.2 1.4-2.5 2.8-3.2-.5.9-.8 2-.9 3.2H7.1zm0 2H9c.1 1.2.4 2.3.9 3.2-1.4-.7-2.4-2-2.8-3.2zM12 16.9c-.7-.9-1.2-2.3-1.4-3.9h2.8c-.2 1.6-.7 3-1.4 3.9zm2.1-.7c.5-.9.8-2 .9-3.2h1.9c-.4 1.2-1.4 2.5-2.8 3.2z"/>
+          </svg>
+        </span>
         <a href="https://www.semco.com" style="color:#ffffff; text-decoration:none;">www.semco.com</a><br>
-        <a href="mailto:christopher.allison@semco.com"
-          style="color:#ffffff; text-decoration:none;">christopher.allison@semco.com</a><br>
+
+        <!-- Email -->
+        <span style="display:inline-block; vertical-align:middle; margin-right:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;">
+            <circle cx="12" cy="12" r="11" fill="#ffffff" stroke="#1653A5" stroke-width="2"></circle>
+            <path fill="#1653A5" d="M7 8h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2zm0 2l5 3.5L17 10v-.2l-5 3.5-5-3.5V10z"/>
+          </svg>
+        </span>
+        <a href="mailto:christopher.allison@semco.com" style="color:#ffffff; text-decoration:none;">christopher.allison@semco.com</a><br>
+
+        <!-- Address -->
+        <span style="display:inline-block; vertical-align:middle; margin-right:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;">
+            <circle cx="12" cy="12" r="11" fill="#ffffff" stroke="#1653A5" stroke-width="2"></circle>
+            <path fill="#1653A5" d="M12 6a5 5 0 00-5 5c0 3.5 5 8 5 8s5-4.5 5-8a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+        </span>
         1430 Vantage Court, Vista, CA 92081<br>
+
+        <!-- LinkedIn -->
+        <span style="display:inline-block; vertical-align:middle; margin-right:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;">
+            <circle cx="12" cy="12" r="11" fill="#ffffff" stroke="#1653A5" stroke-width="2"></circle>
+            <path fill="#1653A5" d="M8.2 10.1H6.4V17h1.8v-6.9zM7.3 7.2a1 1 0 100 2 1 1 0 000-2zM17.6 13c0-1.8-1-3.1-2.8-3.1-1 0-1.7.5-2 .9v-.7h-1.7V17h1.7v-3.6c0-.9.2-1.8 1.3-1.8s1.2 1 1.2 1.9V17h1.7v-4z"/>
+          </svg>
+        </span>
         <a href="https://www.linkedin.com/company/semco-telemetry" style="color:#ffffff; text-decoration:none;">
           linkedin.com/company/semco-telemetry
         </a>
+
       </div>
+
     </td>
   </tr>
-
 </table>
