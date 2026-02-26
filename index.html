@@ -1,28 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signature Card Generator</title>
+
+    <style>
+      :root {
+        --bg: #0b1220;
+        --text: #eaf0ff;
+        --muted: rgba(234, 240, 255, 0.72);
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        --focus: rgba(99, 163, 255, 0.6);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 700px at 10% 10%, #132546 0%, var(--bg) 55%)
+          no-repeat;
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 28px 18px 60px;
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+
+      .header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 920px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel .panelHeader {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .panel .panelHeader .title {
+        font-size: 13px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        margin: 0;
+      }
+
+      .panel .panelHeader .sub {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .panel .panelBody {
+        padding: 14px 16px 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(12, 22, 40, 0.65);
+        color: var(--text);
+        outline: none;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="tel"]:focus {
+        border-color: rgba(99, 163, 255, 0.55);
+        box-shadow: 0 0 0 4px var(--focus);
+      }
+
+      input[type="file"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px dashed rgba(255, 255, 255, 0.22);
+        background: rgba(12, 22, 40, 0.45);
+        color: var(--muted);
+        outline: none;
+      }
+
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 920px) {
+        .row2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 650;
+        font-size: 13px;
+        letter-spacing: 0.01em;
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .btn.primary {
+        border-color: rgba(99, 163, 255, 0.35);
+        background: rgba(99, 163, 255, 0.16);
+      }
+
+      .toast {
+        display: none;
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 180, 99, 0.28);
+        background: rgba(255, 180, 99, 0.12);
+        color: rgba(255, 240, 220, 0.95);
+        font-size: 12px;
+      }
+
+      .cardsArea {
+        display: grid;
+        gap: 18px;
+      }
+
+      .cardsRow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: flex-start;
+      }
+
+      .cardShell {
+        padding: 16px;
+      }
+
+      .generatedWrap {
+        display: grid;
+        gap: 10px;
+      }
+
+      .cardActions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .copyStatus {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .miniBtn {
+        padding: 8px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      /* Notes / guidelines box */
+      .noteBox {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(12, 22, 40, 0.45);
+        border-radius: 14px;
+        padding: 12px;
+        margin: 12px 0 14px;
+      }
+
+      .noteTitle {
+        margin: 0 0 6px;
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.02em;
+      }
+
+      .noteText {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .noteList {
+        margin: 10px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .kv {
+        margin-top: 10px;
+        display: grid;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .kv code {
+        color: rgba(234, 240, 255, 0.92);
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 6px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+      }
+
+      .previewRow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .previewTile {
+        width: 190px;
+        height: 80px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background:
+          linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+          linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+          linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+        background-size: 18px 18px;
+        background-position: 0 0, 0 9px, 9px -9px, -9px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .previewTile img {
+        display: none;
+        height: 65px; /* matches signature render height */
+        width: auto;
+      }
+
+      .previewMeta {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .metaLine {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.45;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <div>
+          <h1>SEMCO Signature Card Generator</h1>
+          <p>
+            Upload a <strong>name image</strong>, fill in details, generate a card, then click
+            <strong>Copy Card HTML</strong> to paste into Gmail / Outlook signatures.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- Left: GUI -->
+        <div class="panel">
+          <div class="panelHeader">
+            <p class="title">Generator</p>
+            <p class="sub">Create a new card below with the same display.</p>
+          </div>
+          <div class="panelBody">
+            <form id="sigForm" novalidate>
+              <div class="field">
+                <label for="nameImage">Name image (transparent PNG recommended)</label>
+                <input id="nameImage" name="nameImage" type="file" accept="image/*" />
+
+                <!-- Live preview + size readout -->
+                <div class="previewRow">
+                  <div class="previewTile">
+                    <img id="namePreview" alt="Name preview" />
+                    <span id="previewPlaceholder" style="font-size:12px; color:rgba(234,240,255,0.55);">
+                      Preview (65px tall)
+                    </span>
+                  </div>
+                  <div class="previewMeta">
+                    <p class="metaLine" id="imgMeta1">Upload an image to see sizing details.</p>
+                    <p class="metaLine" id="imgMeta2"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Professional notes / guidelines -->
+              <div class="noteBox">
+                <p class="noteTitle">Name Image Guidelines</p>
+                <p class="noteText">
+                  Your signature displays the name image at <code>65px</code> tall. For crisp results
+                  in Gmail/Outlook, export a larger image and let it scale down.
+                </p>
+
+                <ul class="noteList">
+                  <li>
+                    <strong>Recommended export (best quality):</strong>
+                    <code>~260px tall</code> (4× the 65px display height), width proportional.
+                  </li>
+                  <li>
+                    <strong>Minimum export (acceptable):</strong>
+                    <code>~180px tall</code> (similar to the sample). Bigger is sharper.
+                  </li>
+                  <li>
+                    <strong>Crop:</strong> crop tightly to the text with a small padding (about
+                    <code>8–16px</code>) so it doesn’t look “too far left/right” in the signature.
+                  </li>
+                  <li>
+                    <strong>Background:</strong> use a transparent PNG (recommended). White text works best.
+                  </li>
+                  <li>
+                    <strong>Font sizing (practical rule):</strong> when designing, scale the name so the
+                    letters fill about <code>70–85%</code> of the canvas height (leave breathing room for descenders).
+                  </li>
+                </ul>
+
+                <div class="kv">
+                  <div>
+                    Display target: <code>height=65px</code>
+                    &nbsp;•&nbsp; High-DPI export target: <code>height≈260px</code>
+                    &nbsp;•&nbsp; Suggested max file size: <code>&lt; 200KB</code>
+                  </div>
+                  <div id="dynamicSizingLine" style="display:none;"></div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="fullName">Name (used for image alt text)</label>
+                <input id="fullName" name="fullName" type="text" placeholder="Chris Allison" />
+              </div>
+
+              <div class="field">
+                <label for="title">Title</label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  placeholder="EXECUTIVE ADMINISTRATOR"
+                />
+              </div>
+
+              <div class="row2">
+                <div class="field">
+                  <label for="phone">Phone</label>
+                  <input id="phone" name="phone" type="tel" placeholder="760-727-7800" />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="christopher.allison@semco.com"
+                  />
+                </div>
+              </div>
+
+              <div class="actions">
+                <button type="submit" class="btn primary">Create Card</button>
+                <button type="button" class="btn" id="resetBtn">Reset</button>
+              </div>
+
+              <div class="toast" id="toast"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Preview & Output -->
+        <div class="cardsArea">
+          <div class="panel">
+            <div class="panelHeader">
+              <p class="title">Example (do not change)</p>
+              <p class="sub">This is the reference output.</p>
+            </div>
+
+            <div class="cardShell">
+              <!-- ====== ORIGINAL EXAMPLE CARD (UNCHANGED) ====== -->
+              <table cellpadding="0" cellspacing="0" width="600" style="font-family: 'Poppins', Arial, sans-serif; color:#ffffff; border-collapse:collapse; width: 410px;
+                  height: 225px;">
+                <tr>
+                  <td bgcolor="#1653A5" background="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png"
+                    style="
+                      background-color:#1653A5;
+                      background-image:url('https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png');
+                      background-repeat:no-repeat;
+                      background-position: top right;
+                      background-size:cover;
+                      padding: 6px 0 30px;
+                    ">
+
+                    <!-- Name (REPLACED WITH IMAGE) -->
+                    <div style="line-height:1; padding: 0px 22px;">
+                      <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/ChrisAllison.png"
+                          alt="Chris Allison"
+                          height="65"
+                          style="display:block; border:0; outline:none; text-decoration:none;">
+                    </div>
+
+                    <!-- Title -->
+                    <div
+                      style="font-size:6px; letter-spacing:1.9px; margin:6px 0 0 28px; font-family:'Poppins', Arial, sans-serif; font-weight:800;">
+                      EXECUTIVE ADMINISTRATOR
+                    </div>
+
+                    <br />
+
+                    <!-- Contact lines -->
+                    <div
+                      style=" font-size:7.8px; line-height:1.8; margin: 0px 0 0 25px; letter-spacing: normal; font-family:'Poppins', Arial, sans-serif; font-weight:400;">
+
+                      <!-- Phone -->
+                      <div style="margin-top:3px;">
+                        <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                          <span style="display:flex;   justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
+                            <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/phoneCircle.png"
+                                width="13" height="13" fill="#1653A5" alt=""
+                                style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
+                          </span>
+                        </span>
+                        <a href="tel:7607277800" style="color:#ffffff; text-decoration:none;">760-727-7800</a><br>
+                      </div>
+
+                      <!-- Website -->
+                      <div >
+                        <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                          <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px;  line-height:18px; ">
+                            <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/globeCircle.png"
+                                width="13" height="13"  alt="" fill="#1653A5"
+                                style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
+                          </span>
+                        </span>
+                        <a href="https://www.semco.com" style="color:#ffffff; text-decoration:none;">www.semco.com</a><br>
+                      </div>
+
+                      <!-- Email -->
+                      <div style="margin-top:3px;">
+                        <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                          <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
+                            <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/mailCircle.png"
+                                width="13" height="13 "  alt="" fill="#1653A5"
+                                style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
+                          </span>
+                        </span>
+                        <a href="mailto:christopher.allison@semco.com"
+                          style="color:#ffffff; text-decoration:none;">christopher.allison@semco.com</a><br>
+                      </div>
+
+                      <!-- Address -->
+                      <div style="margin-top:3px;">
+                        <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                          <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
+                            <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/pinpointCircle.png"
+                                width="13" height="13" fill="#1653A5" alt=""
+                                style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
+                          </span>
+                        </span>
+                        1430 Vantage Court, Vista, CA 92081<br>
+                      </div>
+
+                      <!-- LinkedIn -->
+                      <div style="margin-top:3px;">
+                        <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
+                          <span style="display:flex; justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
+                            <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/linkedinCircle.png"
+                                width="13" height="13"fill="#1653A5" alt=""
+                                style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
+                          </span>
+                        </span>
+                        <a href="https://www.linkedin.com/company/semco-telemetry" style="color:#ffffff; text-decoration:none;">
+                          https://www.linkedin.com/company/semco-telemetry
+                        </a>
+                      </div>
+
+                    </div>
+
+                  </td>
+                </tr>
+              </table>
+              <!-- ====== /ORIGINAL EXAMPLE CARD ====== -->
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panelHeader">
+              <p class="title">Generated cards</p>
+              <p class="sub">Create a card → click Copy Card HTML → paste into Gmail/Outlook signature.</p>
+            </div>
+
+            <div class="cardShell">
+              <div class="cardsRow" id="cardsRow"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("sigForm");
+      const cardsRow = document.getElementById("cardsRow");
+      const resetBtn = document.getElementById("resetBtn");
+      const toast = document.getElementById("toast");
+
+      // Preview elements
+      const namePreview = document.getElementById("namePreview");
+      const previewPlaceholder = document.getElementById("previewPlaceholder");
+      const imgMeta1 = document.getElementById("imgMeta1");
+      const imgMeta2 = document.getElementById("imgMeta2");
+      const dynamicSizingLine = document.getElementById("dynamicSizingLine");
+
+      const ASSETS = {
+        background:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png",
+        phoneIcon:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/phoneCircle.png",
+        globeIcon:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/globeCircle.png",
+        mailIcon:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/mailCircle.png",
+        pinIcon:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/pinpointCircle.png",
+        linkedinIcon:
+          "https://raw.githubusercontent.com/iamDSnow/semcoSig/main/linkedinCircle.png",
+      };
+
+      const DEFAULTS = {
+        websiteUrl: "https://www.semco.com",
+        websiteLabel: "www.semco.com",
+        addressLine: "1430 Vantage Court, Vista, CA 92081",
+        linkedinUrl: "https://www.linkedin.com/company/semco-telemetry",
+        linkedinLabel: "https://www.linkedin.com/company/semco-telemetry",
+      };
+
+      const DISPLAY_NAME_HEIGHT_PX = 65;     // signature render height
+      const RETINA_TARGET_HEIGHT_PX = 260;   // recommended export for crisp text
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.style.display = "block";
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(() => (toast.style.display = "none"), 3500);
+      }
+
+      function sanitizeText(v) {
+        return String(v || "").trim();
+      }
+
+      function digitsOnly(v) {
+        return String(v || "").replace(/\D/g, "");
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatPhoneDisplay(raw) {
+        const d = digitsOnly(raw);
+        if (d.length === 10) {
+          return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+        }
+        return sanitizeText(raw);
+      }
+
+      async function copyHtmlToClipboard(html) {
+        if (navigator.clipboard && window.ClipboardItem) {
+          const blob = new Blob([html], { type: "text/html" });
+          const item = new ClipboardItem({
+            "text/html": blob,
+            "text/plain": new Blob([html], { type: "text/plain" }),
+          });
+          await navigator.clipboard.write([item]);
+          return;
+        }
+
+        const ta = document.createElement("textarea");
+        ta.value = html;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        ta.style.top = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+
+      function buildCardTableHTML({ nameAlt, nameImageSrc, title, phoneDisplay, phoneDigits, email }) {
+        const safeAlt = escapeHtml(nameAlt || "Name");
+        const safeTitle = escapeHtml(title || "");
+        const safePhoneDisplay = escapeHtml(phoneDisplay || "");
+        const safeEmail = escapeHtml(email || "");
+
+        const telHref = phoneDigits ? `tel:${phoneDigits}` : "";
+        const mailHref = email ? `mailto:${email}` : "";
+
+        return `
 <table cellpadding="0" cellspacing="0" width="600" style="font-family: 'Poppins', Arial, sans-serif; color:#ffffff; border-collapse:collapse; width: 410px;
     height: 225px;">
   <tr>
-    <td bgcolor="#1653A5" background="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png"
+    <td bgcolor="#1653A5" background="${ASSETS.background}"
       style="
         background-color:#1653A5;
-        background-image:url('https://raw.githubusercontent.com/iamDSnow/semcoSig/main/semco-signature.png');
+        background-image:url('${ASSETS.background}');
         background-repeat:no-repeat;
         background-position: top right;
         background-size:cover;
         padding: 6px 0 30px;
       ">
 
-      <!-- Name (REPLACED WITH IMAGE) -->
+      <!-- Name (IMAGE) -->
       <div style="line-height:1; padding: 0px 22px;">
-        <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/ChrisAllison.png"
-             alt="Chris Allison"
+        <img src="${nameImageSrc}"
+             alt="${safeAlt}"
              height="65"
-             style="display:block; border:0; outline:none; text-decoration:none;">
+             style="display:block; border:0; outline:none; text-decoration:none;"
+             onerror="this.style.display='none'; this.parentNode.insertAdjacentHTML('beforeend', '<div style=&quot;font-family: Poppins, Arial, sans-serif; font-weight:800; font-size:18px; padding-top: 14px;&quot;>${safeAlt}</div>');" />
       </div>
 
       <!-- Title -->
       <div
         style="font-size:6px; letter-spacing:1.9px; margin:6px 0 0 28px; font-family:'Poppins', Arial, sans-serif; font-weight:800;">
-        EXECUTIVE ADMINISTRATOR
+        ${safeTitle}
       </div>
 
       <br />
@@ -34,63 +721,70 @@
         <!-- Phone -->
         <div style="margin-top:3px;">
           <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
-            <span style="display:flex;   justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
-              <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/phoneCircle.png"
-                  width="13" height="13" fill="#1653A5" alt=""
+            <span style="display:flex; justify-content: center; align-items: center; width:18px; height:18px; line-height:18px;">
+              <img src="${ASSETS.phoneIcon}"
+                  width="13" height="13" alt=""
                    style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
             </span>
           </span>
-          <a href="tel:7607277800" style="color:#ffffff; text-decoration:none;">760-727-7800</a><br>
+          ${
+            telHref
+              ? `<a href="${telHref}" style="color:#ffffff; text-decoration:none;">${safePhoneDisplay}</a><br>`
+              : `<span style="color:#ffffff;">${safePhoneDisplay}</span><br>`
+          }
         </div>
 
         <!-- Website -->
-        <div >
+        <div>
           <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
-            <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px;  line-height:18px; ">
-              <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/globeCircle.png"
-                  width="13" height="13"  alt="" fill="#1653A5"
+            <span style="display:flex; justify-content: center; align-items: center; width:18px; height:18px; line-height:18px;">
+              <img src="${ASSETS.globeIcon}"
+                  width="13" height="13" alt=""
                    style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
             </span>
           </span>
-          <a href="https://www.semco.com" style="color:#ffffff; text-decoration:none;">www.semco.com</a><br>
+          <a href="${DEFAULTS.websiteUrl}" style="color:#ffffff; text-decoration:none;">${DEFAULTS.websiteLabel}</a><br>
         </div>
 
         <!-- Email -->
         <div style="margin-top:3px;">
           <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
-            <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
-              <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/mailCircle.png"
-                   width="13" height="13 "  alt="" fill="#1653A5"
+            <span style="display:flex; justify-content: center; align-items: center; width:18px; height:18px; line-height:18px;">
+              <img src="${ASSETS.mailIcon}"
+                   width="13" height="13" alt=""
                    style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
             </span>
           </span>
-          <a href="mailto:christopher.allison@semco.com"
-            style="color:#ffffff; text-decoration:none;">christopher.allison@semco.com</a><br>
+          ${
+            mailHref
+              ? `<a href="${mailHref}" style="color:#ffffff; text-decoration:none;">${safeEmail}</a><br>`
+              : `<span style="color:#ffffff;">${safeEmail}</span><br>`
+          }
         </div>
 
         <!-- Address -->
         <div style="margin-top:3px;">
           <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
-            <span style="display:flex;     justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
-              <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/pinpointCircle.png"
-                   width="13" height="13" fill="#1653A5" alt=""
+            <span style="display:flex; justify-content: center; align-items: center; width:18px; height:18px; line-height:18px;">
+              <img src="${ASSETS.pinIcon}"
+                   width="13" height="13" alt=""
                    style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
             </span>
           </span>
-          1430 Vantage Court, Vista, CA 92081<br>
+          ${escapeHtml(DEFAULTS.addressLine)}<br>
         </div>
 
         <!-- LinkedIn -->
         <div style="margin-top:3px;">
           <span style="display:inline-block; vertical-align:middle; margin-right:6px;">
-            <span style="display:flex; justify-content: center;   align-items: center; width:18px; height:18px; line-height:18px;">
-              <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/linkedinCircle.png"
-                   width="13" height="13"fill="#1653A5" alt=""
+            <span style="display:flex; justify-content: center; align-items: center; width:18px; height:18px; line-height:18px;">
+              <img src="${ASSETS.linkedinIcon}"
+                   width="13" height="13" alt=""
                    style="display:inline-block; vertical-align:middle; border:0; outline:none; text-decoration:none;" />
             </span>
           </span>
-          <a href="https://www.linkedin.com/company/semco-telemetry" style="color:#ffffff; text-decoration:none;">
-            https://www.linkedin.com/company/semco-telemetry
+          <a href="${DEFAULTS.linkedinUrl}" style="color:#ffffff; text-decoration:none;">
+            ${escapeHtml(DEFAULTS.linkedinLabel)}
           </a>
         </div>
 
@@ -98,4 +792,176 @@
 
     </td>
   </tr>
-</table>
+</table>`.trim();
+      }
+
+      function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.onerror = () => reject(new Error("Failed to read file."));
+          r.readAsDataURL(file);
+        });
+      }
+
+      function makeGeneratedCardNode(tableHtml) {
+        const wrap = document.createElement("div");
+        wrap.className = "generatedWrap";
+
+        const actions = document.createElement("div");
+        actions.className = "cardActions";
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "btn miniBtn";
+        copyBtn.textContent = "Copy Card HTML";
+
+        const status = document.createElement("div");
+        status.className = "copyStatus";
+        status.textContent = " ";
+
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await copyHtmlToClipboard(tableHtml);
+            status.textContent = "Copied!";
+            window.clearTimeout(status._t);
+            status._t = window.setTimeout(() => (status.textContent = " "), 2000);
+          } catch (err) {
+            showToast("Copy failed. Your browser may block clipboard access.");
+          }
+        });
+
+        actions.appendChild(copyBtn);
+        actions.appendChild(status);
+
+        const holder = document.createElement("div");
+        holder.innerHTML = tableHtml;
+
+        wrap.appendChild(actions);
+        wrap.appendChild(holder);
+
+        return wrap;
+      }
+
+      // Update preview + sizing guidance when user uploads an image
+      document.getElementById("nameImage").addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) {
+          namePreview.style.display = "none";
+          previewPlaceholder.style.display = "inline";
+          imgMeta1.textContent = "Upload an image to see sizing details.";
+          imgMeta2.textContent = "";
+          dynamicSizingLine.style.display = "none";
+          dynamicSizingLine.textContent = "";
+          return;
+        }
+
+        let dataUrl;
+        try {
+          dataUrl = await readFileAsDataURL(file);
+        } catch {
+          showToast("Could not read the uploaded image.");
+          return;
+        }
+
+        const img = new Image();
+        img.onload = () => {
+          const w = img.naturalWidth || 0;
+          const h = img.naturalHeight || 0;
+
+          // How wide will it appear at 65px tall?
+          const displayW = h ? Math.round((w * DISPLAY_NAME_HEIGHT_PX) / h) : 0;
+
+          // If the user wants a crisp export at 260px tall, what width is proportional?
+          const retinaW = h ? Math.round((w * RETINA_TARGET_HEIGHT_PX) / h) : 0;
+
+          namePreview.src = dataUrl;
+          namePreview.style.display = "block";
+          previewPlaceholder.style.display = "none";
+
+          imgMeta1.textContent = `Uploaded: ${w}×${h}px • File: ${(file.size / 1024).toFixed(0)}KB`;
+          imgMeta2.textContent = `In signature: ~${displayW}×${DISPLAY_NAME_HEIGHT_PX}px (scaled down)`;
+
+          dynamicSizingLine.style.display = "block";
+          dynamicSizingLine.innerHTML =
+            `Recommended “best quality” export for this aspect ratio: ` +
+            `<code>${retinaW}×${RETINA_TARGET_HEIGHT_PX}px</code> ` +
+            `(then crop tight to text with ~8–16px padding).`;
+        };
+
+        img.onerror = () => {
+          showToast("That image could not be loaded. Try a PNG/JPG.");
+        };
+
+        img.src = dataUrl;
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const fullName = sanitizeText(document.getElementById("fullName").value);
+        const title = sanitizeText(document.getElementById("title").value);
+        const phoneRaw = sanitizeText(document.getElementById("phone").value);
+        const email = sanitizeText(document.getElementById("email").value);
+        const fileInput = document.getElementById("nameImage");
+        const file = fileInput.files && fileInput.files[0];
+
+        if (!file) {
+          showToast("Please upload a name image to generate the card.");
+          return;
+        }
+
+        if (!title || !phoneRaw || !email) {
+          showToast("Please fill out Title, Phone, and Email.");
+          return;
+        }
+
+        const phoneDigits = digitsOnly(phoneRaw);
+        const phoneDisplay = formatPhoneDisplay(phoneRaw);
+
+        let dataUrl;
+        try {
+          dataUrl = await readFileAsDataURL(file);
+        } catch (err) {
+          showToast("Could not read the uploaded image. Try a different file.");
+          return;
+        }
+
+        const tableHtml = buildCardTableHTML({
+          nameAlt: fullName || "Name",
+          nameImageSrc: dataUrl,
+          title,
+          phoneDisplay,
+          phoneDigits,
+          email,
+        });
+
+        const node = makeGeneratedCardNode(tableHtml);
+        cardsRow.prepend(node);
+
+        form.reset();
+
+        // Reset preview + guidance
+        namePreview.style.display = "none";
+        previewPlaceholder.style.display = "inline";
+        imgMeta1.textContent = "Upload an image to see sizing details.";
+        imgMeta2.textContent = "";
+        dynamicSizingLine.style.display = "none";
+        dynamicSizingLine.textContent = "";
+
+        showToast("Card created. Click “Copy Card HTML” to paste into Gmail/Outlook.");
+      });
+
+      resetBtn.addEventListener("click", () => {
+        form.reset();
+        namePreview.style.display = "none";
+        previewPlaceholder.style.display = "inline";
+        imgMeta1.textContent = "Upload an image to see sizing details.";
+        imgMeta2.textContent = "";
+        dynamicSizingLine.style.display = "none";
+        dynamicSizingLine.textContent = "";
+        showToast("Form reset.");
+      });
+    </script>
+  </body>
+</html>
