@@ -336,7 +336,7 @@
           <h1>SEMCO Signature Card Generator</h1>
           <p>
             Upload a <strong>name image</strong>, fill in details, generate a card, then click
-            <strong>Copy Card HTML</strong> to paste into Gmail / Outlook signatures.
+            <strong>Copy Card HTML</strong> to paste into Gmail signatures.
           </p>
         </div>
       </div>
@@ -392,10 +392,6 @@
                   </li>
                   <li>
                     <strong>Background:</strong> use a transparent PNG (recommended). White text works best.
-                  </li>
-                  <li>
-                    <strong>Font sizing (practical rule):</strong> when designing, scale the name so the
-                    letters fill about <code>70–85%</code> of the canvas height (leave breathing room for descenders).
                   </li>
                 </ul>
 
@@ -460,7 +456,6 @@
             </div>
 
             <div class="cardShell">
-              <!-- ====== ORIGINAL EXAMPLE CARD (UNCHANGED) ====== -->
               <table cellpadding="0" cellspacing="0" width="600" style="font-family: 'Poppins', Arial, sans-serif; color:#ffffff; border-collapse:collapse; width: 410px;
                   height: 225px;">
                 <tr>
@@ -474,7 +469,6 @@
                       padding: 6px 0 30px;
                     ">
 
-                    <!-- Name (REPLACED WITH IMAGE) -->
                     <div style="line-height:1; padding: 0px 22px;">
                       <img src="https://raw.githubusercontent.com/iamDSnow/semcoSig/main/assets/ChrisAllison.png"
                           alt="Chris Allison"
@@ -562,7 +556,7 @@
                   </td>
                 </tr>
               </table>
-              <!-- ====== /ORIGINAL EXAMPLE CARD ====== -->
+              <!-- ====== /EXAMPLE CARD ====== -->
             </div>
           </div>
 
@@ -616,8 +610,8 @@
         linkedinLabel: "https://www.linkedin.com/company/semco-telemetry",
       };
 
-      const DISPLAY_NAME_HEIGHT_PX = 65;     // signature render height
-      const RETINA_TARGET_HEIGHT_PX = 260;   // recommended export for crisp text
+      const DISPLAY_NAME_HEIGHT_PX = 65;     
+      const RETINA_TARGET_HEIGHT_PX = 260;   
 
       function showToast(message) {
         toast.textContent = message;
